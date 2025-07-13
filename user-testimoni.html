@@ -48,7 +48,7 @@
 <body>
   <h2>📤 Kirim Screenshot Testimoni</h2>
 
-  <div class="form-box">
+  <div class="form-box" id="formBox">
     <input type="text" id="nama" placeholder="Nama kamu" required>
     <textarea id="pesan" rows="3" placeholder="Pesan untuk admin..." required></textarea>
     <input type="file" id="gambar" accept="image/*">
@@ -64,22 +64,26 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
   <script>
-    // 🔧 Ganti ini dengan konfigurasi Firebase milikmu
     // ✅ Konfigurasi Firebase
-const firebaseConfig = {
-apiKey: "AIzaSyAY-j8HHUIHYsw9E6aWbnc2IkcF99pKqDk",
-authDomain: "koinpoin-app.firebaseapp.com",
-projectId: "koinpoin-app",
-storageBucket: "koinpoin-app.firebasestorage.app",
-messagingSenderId: "872103394310",
-appId: "1:872103394310:web:2f446a870e0149509a1787"
-
+    const firebaseConfig = {
+      apiKey: "AIzaSyAY-j8HHUIHYsw9E6aWbnc2IkcF99pKqDk",
+      authDomain: "koinpoin-app.firebaseapp.com",
+      projectId: "koinpoin-app",
+      storageBucket: "koinpoin-app.appspot.com",
+      messagingSenderId: "872103394310",
+      appId: "1:872103394310:web:2f446a870e0149509a1787"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const storage = firebase.storage();
 
-        // Preview gambar
+    // ✅ Login Anonymous (wajib agar Firestore bisa digunakan)
+    firebase.auth().signInAnonymously().catch((error) => {
+      console.error("Login gagal:", error);
+    });
+
+    // ✅ Preview gambar otomatis
     document.getElementById("gambar").addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (file) {
@@ -92,6 +96,7 @@ appId: "1:872103394310:web:2f446a870e0149509a1787"
       }
     });
 
+    // ✅ Fungsi kirim ke admin
     async function kirimKeAdmin() {
       const nama = document.getElementById("nama").value.trim();
       const pesan = document.getElementById("pesan").value.trim();
@@ -108,19 +113,21 @@ appId: "1:872103394310:web:2f446a870e0149509a1787"
       statusMsg.innerText = "📤 Mengunggah...";
 
       try {
-        // Upload ke storage
+        // ✅ Upload gambar ke Firebase Storage
         const snap = await fileRef.put(file);
         const url = await snap.ref.getDownloadURL();
+        console.log("✅ URL Gambar:", url);
 
-        // Simpan ke Firestore
+        // ✅ Simpan data ke Firestore
         await db.collection("pesanTestimoni").add({
           nama, pesan, urlGambar: url, waktu
         });
 
         statusMsg.innerText = "✅ Berhasil dikirim ke Admin!";
-        document.querySelector("form")?.reset();
+        document.getElementById("formBox").reset();
+        document.getElementById("preview").style.display = "none";
       } catch (e) {
-        console.error(e);
+        console.error("❌ ERROR:", e);
         statusMsg.innerText = "❌ Gagal mengirim.";
       }
     }
