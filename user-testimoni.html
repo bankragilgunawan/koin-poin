@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kirim Screenshot Testimoni</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #f0f0f0; padding: 20px; }
+    h2 { text-align: center; color: #1e1e2f; }
+    .form-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    button {
+      background: #1e1e2f;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #preview {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+    .status {
+      text-align: center;
+      font-size: 14px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h2>📤 Kirim Screenshot Testimoni</h2>
+
+  <div class="form-box">
+    <input type="text" id="nama" placeholder="Nama kamu" required>
+    <textarea id="pesan" rows="3" placeholder="Pesan untuk admin..." required></textarea>
+    <input type="file" id="gambar" accept="image/*">
+    <img id="preview" src="" alt="Preview Gambar">
+    <button onclick="kirimKeAdmin()">Kirim ke Admin</button>
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+  <script>
+    // 🔧 Ganti ini dengan konfigurasi Firebase milikmu
+    // ✅ Konfigurasi Firebase
+const firebaseConfig = {
+apiKey: "AIzaSyAY-j8HHUIHYsw9E6aWbnc2IkcF99pKqDk",
+authDomain: "koinpoin-app.firebaseapp.com",
+projectId: "koinpoin-app",
+storageBucket: "koinpoin-app.firebasestorage.app",
+messagingSenderId: "872103394310",
+appId: "1:872103394310:web:2f446a870e0149509a1787"
+
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+        // Preview gambar
+    document.getElementById("gambar").addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          document.getElementById("preview").src = evt.target.result;
+          document.getElementById("preview").style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    async function kirimKeAdmin() {
+      const nama = document.getElementById("nama").value.trim();
+      const pesan = document.getElementById("pesan").value.trim();
+      const file = document.getElementById("gambar").files[0];
+      const statusMsg = document.getElementById("statusMsg");
+
+      if (!nama || !pesan || !file) {
+        alert("Isi semua form dan pilih gambar!");
+        return;
+      }
+
+      const waktu = new Date().toISOString();
+      const fileRef = storage.ref("screenshot/" + waktu + "_" + file.name);
+      statusMsg.innerText = "📤 Mengunggah...";
+
+      try {
+        // Upload ke storage
+        const snap = await fileRef.put(file);
+        const url = await snap.ref.getDownloadURL();
+
+        // Simpan ke Firestore
+        await db.collection("pesanTestimoni").add({
+          nama, pesan, urlGambar: url, waktu
+        });
+
+        statusMsg.innerText = "✅ Berhasil dikirim ke Admin!";
+        document.querySelector("form")?.reset();
+      } catch (e) {
+        console.error(e);
+        statusMsg.innerText = "❌ Gagal mengirim.";
+      }
+    }
+  </script>
+</body>
+</html>
