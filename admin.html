@@ -21,94 +21,112 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       margin-bottom: 25px;
     }
-    .chat-icon {
-      background: linear-gradient(135deg, #f39c12, #e67e22);
+    button {
+      font-family: inherit;
+      padding: 10px 16px;
       border: none;
+      border-radius: 8px;
+      margin: 5px 0;
+      background: #e67e22;
       color: white;
-      font-size: 20px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease;
     }
-    .chat-icon:hover {
-      transform: scale(1.1);
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 15px;
+      margin-bottom: 20px;
+      display: none;
     }
+    #transaksiList, #userList {
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    #transaksiList::-webkit-scrollbar, #userList::-webkit-scrollbar {
+      width: 6px;
+    }
+    #transaksiList::-webkit-scrollbar-thumb, #userList::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 6px;
+    }
+    .input-cari {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    
+    .chat-item {
+  background: #fffbe6;
+  border-left: 4px solid #f39c12;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.button-group button {
+  flex: 1;
+  text-align: center;
+}
   </style>
 </head>
-
-<body style="margin: 0; background: #f9f9f9; font-family: 'Poppins', sans-serif;">
-
-  <!-- ✅ PANEL ADMIN (DISEMBUNYIKAN DULU) -->
-  <div id="adminPanel" style="display:none; max-width:600px; margin: 40px auto; padding: 20px; background:#fff; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.07);">
-
-    <!-- 🔶 BAR ATAS -->
-    <div class="top-bar">
-      <div style="font-size: 20px; font-weight: 600; color: #1e1e2f;">Panel Admin</div>
-      <button onclick="toggleChat()" title="Lihat Promo" class="chat-icon">💬</button>
-    </div>
-
-    <!-- 👤 Info User -->
-    <div id="userList"></div>
-
-    <!-- 🔘 Tombol Aksi -->
-    <div class="btn-row" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:20px;">
-      <button onclick="tambahPoinManual()" style="flex:1; padding:10px; background:#2ecc71; color:white; border:none; border-radius:8px;">+ Tambah Poin</button>
-      <button onclick="hapusUser()" style="flex:1; padding:10px; background:#c0392b; color:white; border:none; border-radius:8px;">🗑️ Hapus</button>
-      <button onclick="toggleRiwayat()" style="flex:1; padding:10px; background:#3498db; color:white; border:none; border-radius:8px;">📜 Riwayat</button>
-      <button onclick="toggleTestimoni()" style="flex:1; padding:10px; background:#9b59b6; color:white; border:none; border-radius:8px;">🖼️ Testimoni</button>
-    <!-- 📋 Daftar Transaksi -->
-<div id="transaksiSection" style="margin-top:30px;">
-  <h3>📋 Daftar Transaksi Pengguna</h3>
-  <div id="transaksiList">Memuat transaksi...</div>
+<body>
+<div id="loginBox" style="max-width: 400px; margin: auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); text-align: center;">
+  <h2 style="color: #e67e22;">🛡️ Akses Admin</h2>
+  <input type="password" id="adminPin" placeholder="Masukkan PIN Admin" style="width: 100%; padding: 10px; border-radius: 10px; margin-top: 15px; border: 1px solid #ccc;"/>
+  <button onclick="verifikasi()">Masuk</button>
 </div>
 
-    <!-- 💬 Chat Popup -->
-    <div id="chatPopup" style="display:none; margin-top:20px; background:#fff; padding:15px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-      <h3>📢 Promo & Rewards</h3>
-      <div style="margin-bottom: 10px;">
-        <button onclick="formatText('bold')"><b>B</b></button>
-        <button onclick="formatText('italic')"><i>I</i></button>
-        <button onclick="formatText('underline')"><u>U</u></button>
-      </div>
-      <div id="inputChat" contenteditable="true"
-        style="width:100%; height:100px; padding:10px; border-radius:8px; border:1px solid #ccc; background:#fefefe; overflow-y:auto; font-size:14px; line-height:1.4; box-sizing:border-box; word-break:break-word; white-space:pre-wrap;"></div>
-      <button onclick="kirimChat()" style="margin-top:10px; width:100%; padding:10px; background:#e67e22; color:white; border:none; border-radius:8px;">➕ Kirim</button>
-      <div id="daftarChat" style="margin-top:20px;"></div>
-    </div>
-
-    <!-- 📜 Riwayat -->
-    <div id="riwayatSection" style="display:none; margin-top:20px;">
-      <h3>📜 Riwayat Transaksi</h3>
-      <div id="riwayatList"></div>
-    </div>
+<div id="adminPanel" style="display:none; max-width: 600px; margin: 40px auto;">
+  <div class="top-bar">
+    <div style="font-size: 20px; font-weight: 600;">Panel Admin</div>
   </div>
-  
-<!-- 🖼️ Testimoni -->
-<div id="testimoniSection" style="display:none; margin-top:20px;">
-  <h3>🖼️ Testimoni User</h3>
-  <div id="testimoniList">Memuat...</div>
+<div class="button-group">
+  <button onclick="toggleTransaksi()">📋 Lihat Transaksi</button>
+  <button onclick="toggleUser()">👥 Lihat Daftar User</button>
+  <button onclick="togglePengumuman()">📢 Lihat Pengumuman</button>
 </div>
 
-  <!-- ✅ FORM LOGIN -->
-  <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;">
-    <div id="loginBox" style="width: 100%; max-width: 400px; background: white; padding: 30px 25px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); text-align: center;">
-      <h1 style="margin-bottom: 25px; font-size: 26px; color: #e67e22;">🛡️ Akses Admin</h1>
-      <input type="password" id="adminPin" placeholder="Masukkan PIN Admin"
-        style="width: 100%; box-sizing: border-box; padding: 12px 14px; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 16px; font-size: 16px;" />
-      <button onclick="verifikasi()"
-        style="width: 100%; padding: 12px; background: #e67e22; border: none; border-radius: 10px; color: white; font-size: 16px; font-weight: bold; cursor: pointer;">Masuk</button>
-    </div>
+<!-- Section Transaksi -->
+<div id="transaksiSection" class="section" style="display: none;">
+  <h3>Daftar Transaksi</h3>
+  <div id="transaksiList">Memuat...</div>
+</div>
+
+<!-- Section User -->
+<div id="userSection" class="section" style="display: none;">
+  <h3>Daftar User</h3>
+  <input type="text" id="cariUser" oninput="filterUser()" class="input-cari" placeholder="Cari nama atau ID...">
+  <div id="userList">Memuat...</div>
+</div>
+
+<!-- Section Pengumuman -->
+<div id="pengumumanSection" class="section" style="display: none;">
+  <h3>📢 Panel Pengumuman</h3>
+  <div class="format-btns">
+    <button onclick="formatText('bold')"><b>B</b></button>
+    <button onclick="formatText('italic')"><i>I</i></button>
+    <button onclick="formatText('underline')"><u>U</u></button>
   </div>
-  
-  <!-- ✅ Firebase Script CDN -->
+  <div id="inputChat" contenteditable="true" style="width:100%; height:100px; border:1px solid #ccc; border-radius:8px; padding:10px; margin-top:10px;"></div>
+  <button onclick="kirimChat()">➕ Kirim Pengumuman</button>
+  <div id="daftarChat" style="max-height:300px; overflow-y:auto; margin-top:15px;">Memuat pengumuman...</div>
+</div>
+    </div>
+
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
-
 <script>
-  // ✅ Konfigurasi Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyALxoYAG7CiMY_i9oP5BZg9yIe7Scnfegk",
     authDomain: "koin-pay.firebaseapp.com",
@@ -117,387 +135,215 @@
     messagingSenderId: "38032808385",
     appId: "1:38032808385:web:9cd5c1ccdf9508bbf67740"
   };
-
-  // ✅ Inisialisasi
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-</script>
 
-<!-- ✅ Masukkan semua fungsi kamu DI SINI (verifikasi, tampilkanTransaksi, dll) -->
-<script>
   const PIN_ADMIN = "1234";
+  let userCache = [];
 
-  window.verifikasi = function () {
+  async function verifikasi() {
     const pin = document.getElementById("adminPin").value;
     if (pin === PIN_ADMIN) {
       document.getElementById("loginBox").style.display = "none";
       document.getElementById("adminPanel").style.display = "block";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      tampilkanTransaksi();
     } else {
       alert("PIN salah!");
     }
-  };
-  
-// 🔁 Tampilkan transaksi dari Firebase
-async function tampilkanTransaksi() {
-  const container = document.getElementById("transaksiList");
-  container.innerHTML = "⏳ Memuat...";
+  }
 
-  try {
-    const q = query(collection(db, "transaksi"), orderBy("waktu", "desc"), limit(10));
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
-      container.innerHTML = "<p style='color:#888;'>Belum ada transaksi.</p>";
-      return;
+  async function tampilkanTransaksi() {
+    const container = document.getElementById("transaksiList");
+    container.innerHTML = "⏳ Memuat...";
+    try {
+      const snapshot = await db.collection("transaksi").orderBy("waktu", "desc").get();
+      if (snapshot.empty) {
+        container.innerHTML = "<p>Belum ada transaksi.</p>";
+        return;
+      }
+      container.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.style = "background:#fff; padding:10px; border-left:4px solid " + (data.status === "sukses" ? "#2ecc71" : data.status === "gagal" ? "#e74c3c" : "#f39c12") + "; border-radius:8px; margin-bottom:10px; box-shadow:0 1px 5px rgba(0,0,0,0.05)";
+        div.innerHTML = `
+          <b>${data.nama || "Tanpa Nama"}</b> (${data.nomor || "-"})<br>
+          Nominal: ${data.nominal || "-"}<br>Status: <b>${data.status}</b><br>
+          <button onclick="konfirmasi('${doc.id}', 'sukses')">✅ Sukses</button>
+          <button onclick="konfirmasi('${doc.id}', 'gagal')">❌ Gagal</button>
+        `;
+        container.appendChild(div);
+      });
+    } catch (e) {
+      container.innerHTML = "<p style='color:red;'>Gagal memuat transaksi.</p>";
     }
-
-    container.innerHTML = "";
-
-    snapshot.forEach(docItem => {
-      const d = docItem.data();
-      const id = docItem.id;
-
-      const div = document.createElement("div");
-      div.style = `
-        background: #fff;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 15px;
-        box-shadow: 0 1px 6px rgba(0,0,0,0.06);
-        border-left: 4px solid ${d.status === "sukses" ? "#2ecc71" : d.status === "gagal" ? "#e74c3c" : "#f39c12"};
-      `;
-
-      div.innerHTML = `
-        <div><b>👤 ${d.nama || "Tanpa Nama"}</b> (${d.nomor})</div>
-        <div style="font-size:13px; color:#666;">🕒 ${d.waktu}</div>
-        <div style="margin: 6px 0;">💰 Nominal: ${d.nominal} - Status: <b>${d.status}</b></div>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-          <button onclick="ubahStatusTransaksi('${id}', 'sukses')" style="flex:1; padding:8px; background:#2ecc71; color:white; border:none; border-radius:8px;">✅ Sukses</button>
-          <button onclick="ubahStatusTransaksi('${id}', 'gagal')" style="flex:1; padding:8px; background:#e74c3c; color:white; border:none; border-radius:8px;">❌ Gagal</button>
-        </div>
-      `;
-
-      container.appendChild(div);
-    });
-
-  } catch (err) {
-    container.innerHTML = "<p style='color:red;'>Gagal memuat transaksi.</p>";
   }
-}
 
-// 🔄 Ubah status transaksi
-window.ubahStatusTransaksi = async function (id, statusBaru) {
-  const konfirmasi = confirm(`Yakin ingin ubah status transaksi menjadi "${statusBaru}"?`);
-  if (!konfirmasi) return;
-
-  try {
-    await updateDoc(doc(db, "transaksi", id), {
-      status: statusBaru
-    });
-    alert("✅ Status berhasil diperbarui.");
-    tampilkanTransaksi();
-  } catch (err) {
-    alert("❌ Gagal mengubah status: " + err);
+  async function konfirmasi(id, status) {
+    if (!confirm("Yakin ubah status menjadi " + status + "?")) return;
+    try {
+      await db.collection("transaksi").doc(id).update({ status });
+      alert("Status berhasil diperbarui.");
+      tampilkanTransaksi();
+    } catch (e) {
+      alert("Gagal: " + e.message);
+    }
   }
-};
 
-  // ✅ Fungsi tampilkan info user
   async function tampilkanUser() {
-  const userList = document.getElementById("userList");
-  userList.innerHTML = "<p>Memuat data...</p>";
+    const list = document.getElementById("userList");
+    list.innerHTML = "⏳ Memuat...";
+    try {
+      const snapshot = await db.collection("user").get();
+      if (snapshot.empty) {
+        list.innerHTML = "<p>Belum ada user.</p>";
+        return;
+      }
+      userCache = [];
+      list.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const obj = {
+          id: doc.id,
+          nama: data.nama || "Tanpa Nama"
+        };
+        userCache.push(obj);
 
-  const q = query(collection(db, "user"));
-  const snapshot = await getDocs(q);
-
-  if (snapshot.empty) {
-    userList.innerHTML = "<p>Belum ada pengguna terdaftar.</p>";
-    return;
+        const div = document.createElement("div");
+        div.className = "user-item";
+        div.dataset.nama = obj.nama.toLowerCase();
+        div.dataset.id = obj.id.toLowerCase();
+        div.style = "background:#fff; padding:10px; border-radius:8px; margin-bottom:10px; box-shadow:0 1px 5px rgba(0,0,0,0.05)";
+        div.innerHTML = `
+          <b>${obj.nama}</b><br>ID: ${obj.id}<br>
+          <input type="number" id="poin-${obj.id}" placeholder="Jumlah Poin" style="width:80%; padding:5px; margin-top:5px;">
+          <button onclick="tambahPoin('${obj.id}', '${obj.nama}')">+ Tambah</button>
+        `;
+        list.appendChild(div);
+      });
+    } catch (e) {
+      list.innerHTML = "<p style='color:red;'>Gagal memuat user.</p>";
+    }
   }
 
-  userList.innerHTML = "";
+  function filterUser() {
+    const keyword = document.getElementById("cariUser").value.toLowerCase();
+    const items = document.querySelectorAll(".user-item");
+    items.forEach(el => {
+      const nama = el.dataset.nama;
+      const id = el.dataset.id;
+      el.style.display = nama.includes(keyword) || id.includes(keyword) ? "block" : "none";
+    });
+  }
 
-  snapshot.forEach(docItem => {
-    const user = docItem.data();
-    const id = docItem.id;
-
-    const div = document.createElement("div");
-    div.className = "user-card";
-    div.style = `
-      background:#fff; border-radius:12px; padding:16px;
-      box-shadow:0 1px 6px rgba(0,0,0,0.06); margin-bottom:16px;
-    `;
-
-    div.innerHTML = `
-      <b>👤 ${user.nama || "Tanpa Nama"}</b><br>
-      <small>ID: ${user.id}</small><br>
-      <small>🕒 ${user.waktu}</small><br>
-      <input type="number" id="input-${id}" placeholder="Jumlah poin">
-      <button onclick="tambahPoinFirebase('${id}', '${user.nama}')">+ Tambah Poin</button>
-    `;
-
-    userList.appendChild(div);
-  });
-}
- window.tambahPoinFirebase = async function(id, nama) {
-  const input = document.getElementById("input-" + id);
-  const jumlah = parseInt(input.value || "0");
-
-  if (jumlah <= 0) return alert("Masukkan jumlah poin yang valid.");
-
-  const waktu = new Date().toLocaleString("id-ID");
-
-  await addDoc(collection(db, "riwayatPoin"), {
-    userId: id,
-    nama,
-    poin: jumlah,
-    waktu
-  });
-
-  alert(`✅ Poin untuk ${nama} berhasil ditambahkan.`);
-  input.value = "";
-};
-
-  // ✅ Tambah poin manual
-  window.tambahPoinManual = function () {
-    const userData = JSON.parse(localStorage.getItem("profilUser") || "null");
-    if (!userData) return;
-    const id = userData.id;
-    const input = document.getElementById("input-" + id);
+  async function tambahPoin(id, nama) {
+    const input = document.getElementById("poin-" + id);
     const jumlah = parseInt(input.value || "0");
-
-    if (jumlah <= 0) return alert("Masukkan jumlah poin yang benar.");
-
-    let poin = parseInt(localStorage.getItem("koinUser") || "0");
-    poin += jumlah;
-    localStorage.setItem("koinUser", poin);
-    document.getElementById("poin-" + id).innerText = poin;
-
-    const riwayat = JSON.parse(localStorage.getItem("riwayat") || "[]");
+    if (jumlah <= 0) return alert("Masukkan jumlah poin yang valid.");
     const waktu = new Date().toLocaleString("id-ID");
-    riwayat.push({ produk: `Admin Tambah Poin`, poin: jumlah, waktu });
-    localStorage.setItem("riwayat", JSON.stringify(riwayat));
-    tampilkanRiwayat();
+    await db.collection("riwayatPoin").add({ userId: id, nama, poin: jumlah, waktu });
+    alert(`✅ Poin berhasil ditambahkan untuk ${nama}`);
     input.value = "";
-  };
+  }
 
-  // ✅ Hapus user
-  window.hapusUser = function () {
-    if (confirm("Yakin ingin hapus akun ini?")) {
-      localStorage.removeItem("profilUser");
-      localStorage.removeItem("koinUser");
-      alert("✅ Akun dihapus.");
-      location.reload();
-    }
-  };
-
-  // ✅ Tampilkan/sembunyikan riwayat
-  window.toggleRiwayat = function () {
-    const section = document.getElementById("riwayatSection");
+  function toggleTransaksi() {
+    const section = document.getElementById("transaksiSection");
     if (section.style.display === "none" || section.style.display === "") {
       section.style.display = "block";
-      tampilkanRiwayat();
+      tampilkanTransaksi();
     } else {
       section.style.display = "none";
     }
-  };
-
-  // ✅ Tampilkan riwayat dari localStorage
-  function tampilkanRiwayat() {
-  const riwayat = JSON.parse(localStorage.getItem("riwayat") || "[]");
-  const riwayatList = document.getElementById("riwayatList");
-  if (!riwayatList) return;
-
-  riwayatList.innerHTML = "";
-
-  if (riwayat.length === 0) {
-    riwayatList.innerHTML = "<p style='color:#999;'>Belum ada riwayat.</p>";
-    return;
   }
 
-  riwayat.reverse().forEach(item => {
-    const warna = item.poin > 0 ? "#27ae60" : "#e74c3c";
-    const tanda = item.poin > 0 ? "+" : "";
-
-    const div = document.createElement("div");
-    div.style = `
-      background: #fff;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 15px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
-      border-left: 4px solid ${warna};
-    `;
-    div.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="font-weight: bold; color: #333; display: flex; gap: 8px; align-items: center;">
-          📦 ${item.produk}
-        </div>
-        <div style="color: ${warna}; font-weight: bold; font-size: 15px;">${tanda}${item.poin} Poin</div>
-      </div>
-      <div style="margin-top: 6px; color: #999; font-size: 12px;">🕒 ${item.waktu}</div>
-    `;
-    riwayatList.appendChild(div);
-  });
+  function toggleUser() {
+    const section = document.getElementById("userSection");
+    if (section.style.display === "none" || section.style.display === "") {
+      section.style.display = "block";
+      tampilkanUser();
+    } else {
+      section.style.display = "none";
+    }
+  }
+  
+  function togglePengumuman() {
+  const section = document.getElementById("pengumumanSection");
+  if (section.style.display === "none" || section.style.display === "") {
+    section.style.display = "block";
+    tampilkanChat();
+  } else {
+    section.style.display = "none";
+  }
 }
 
-  // ✅ Tampilkan/sembunyikan chat popup
-  window.toggleChat = function () {
-    const popup = document.getElementById("chatPopup");
-    popup.style.display = popup.style.display === "none" || popup.style.display === "" ? "block" : "none";
-  };
+function formatText(command) {
+  const editor = document.getElementById("inputChat");
+  editor.focus();
+  document.execCommand(command, false, null);
+}
 
-  // ✅ Format teks di editor
-  window.formatText = function (command) {
-    const editor = document.getElementById("inputChat");
-    editor.focus();
-    document.execCommand(command, false, null);
-  };
-
-  // ✅ Kirim pesan ke Firebase
-  window.kirimChat = async function () {
-    const isi = document.getElementById("inputChat").innerHTML.trim();
-    if (!isi) return alert("Pesan kosong!");
-
-    const waktu = new Date().toLocaleString("id-ID");
-
-    try {
-      await addDoc(collection(db, "chatGlobal"), { isi, waktu });
-      alert("✅ Pesan terkirim!");
-      document.getElementById("inputChat").innerHTML = "";
-      tampilkanChat();
-    } catch (error) {
-      alert("❌ Gagal mengirim: " + error);
-    }
-  };
-
-  // ✅ Tampilkan pesan dari Firebase
-  async function tampilkanChat() {
+async function tampilkanChat() {
   const container = document.getElementById("daftarChat");
-  container.innerHTML = "";
-
+  container.innerHTML = "⏳ Memuat...";
   try {
-    const q = query(collection(db, "chatGlobal"), orderBy("waktu", "desc"));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-      container.innerHTML = "<p style='color:#999;'>Belum ada pesan.</p>";
-      return;
-    }
-
-    querySnapshot.forEach((docItem) => {
-      const c = docItem.data();
-      const id = docItem.id;
-
+    const querySnapshot = await db.collection("chatGlobal").orderBy("waktu", "desc").get();
+    container.innerHTML = "";
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
       const div = document.createElement("div");
-      div.style = `
-        background: #fff;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 15px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        border-left: 4px solid #f39c12;
-      `;
+      div.className = "chat-item";
+      div.style = "background: #fffbe6; border-left: 4px solid #f39c12; padding: 10px; margin-bottom: 10px; border-radius: 8px;";
       div.innerHTML = `
-        <div style="display: flex; align-items: flex-start; gap: 10px;">
-          <div style="font-size: 22px;">📢</div>
-          <div style="flex: 1;">
-            <div style="font-size: 15px; line-height: 1.5; color: #333;">${c.isi}</div>
-            <div style="margin-top: 8px; font-size: 12px; color: #999;">${c.waktu}</div>
-          </div>
-        </div>
-        <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 10px;">
-          <button onclick="editChat('${id}', \`${c.isi}\`)"
-            style="padding: 6px 10px; font-size: 13px; border: none; border-radius: 8px; background: #f1c40f; color: #fff; cursor: pointer;">✏️ Edit</button>
-          <button onclick="hapusChat('${id}')"
-            style="padding: 6px 10px; font-size: 13px; border: none; border-radius: 8px; background: #e74c3c; color: #fff; cursor: pointer;">🗑️ Hapus</button>
+        ${data.isi}
+        <small style="display:block; color:#999; margin-top:5px;">${data.waktu}</small>
+        <div style="margin-top:8px;">
+          <button onclick="editChat('${doc.id}', \`${data.isi}\`)">✏️ Edit</button>
+          <button onclick="hapusChat('${doc.id}')">🗑️ Hapus</button>
         </div>
       `;
       container.appendChild(div);
     });
-  } catch (err) {
-    container.innerHTML = "<p style='color:red;'>Gagal memuat data</p>";
+  } catch (e) {
+    container.innerHTML = "<p style='color:red;'>Gagal memuat.</p>";
   }
 }
 
-window.editChat = function(id, isiLama) {
-  const isiBaru = prompt("Edit isi pesan:", isiLama);
-  if (!isiBaru || isiBaru.trim() === "") return;
-
-  const waktuBaru = new Date().toLocaleString("id-ID");
-
-  updateDoc(doc(db, "chatGlobal", id), {
-    isi: isiBaru.trim(),
-    waktu: waktuBaru
-  }).then(() => {
-    alert("✅ Pesan diperbarui");
-    tampilkanChat();
-  }).catch(err => {
-    alert("❌ Gagal edit: " + err);
-  });
-};
-
-window.hapusChat = async function (id) {
-  if (!confirm("Yakin ingin menghapus pesan ini?")) return;
+async function kirimChat() {
+  const isi = document.getElementById("inputChat").innerHTML.trim();
+  if (!isi) return alert("⚠️ Pesan kosong!");
+  const waktu = new Date().toLocaleString("id-ID");
   try {
-    await deleteDoc(doc(db, "chatGlobal", id));
-    alert("✅ Pesan dihapus");
+    await db.collection("chatGlobal").add({ isi, waktu });
+    alert("✅ Pengumuman terkirim!");
+    document.getElementById("inputChat").innerHTML = "";
     tampilkanChat();
-  } catch (error) {
-    alert("❌ Gagal menghapus: " + error);
-  }
-};
-
-window.toggleTestimoni = function () {
-  const section = document.getElementById("testimoniSection");
-  if (section.style.display === "none" || section.style.display === "") {
-    section.style.display = "block";
-    tampilkanTestimoni();
-  } else {
-    section.style.display = "none";
-  }
-};
-
-async function tampilkanTestimoni() {
-  const list = document.getElementById("testimoniList");
-  list.innerHTML = "⏳ Memuat...";
-
-  try {
-    const q = query(collection(db, "pesanTestimoni"), orderBy("waktu", "desc"));
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
-      list.innerHTML = "<p style='color:#999;'>Belum ada testimoni.</p>";
-      return;
-    }
-
-    list.innerHTML = "";
-    snapshot.forEach(docItem => {
-      const d = docItem.data();
-      const div = document.createElement("div");
-      div.style = `
-        background: #fff;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 15px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        border-left: 4px solid #9b59b6;
-      `;
-      div.innerHTML = `
-        <div><b>👤 ${d.nama}</b></div>
-        <div style="font-size:13px; color:#666;">🕒 ${new Date(d.waktu).toLocaleString("id-ID")}</div>
-        <div style="margin: 10px 0;">💬 ${d.pesan}</div>
-        <img src="${d.urlGambar}" style="width:100%; border-radius:8px; margin-top:10px;">
-      `;
-      list.appendChild(div);
-    });
-  } catch (err) {
-    console.error(err);
-    list.innerHTML = "<p style='color:red;'>Gagal memuat testimoni.</p>";
+  } catch (e) {
+    alert("❌ Gagal kirim: " + e.message);
   }
 }
 
+async function editChat(id, isiLama) {
+  const isiBaru = prompt("Edit isi pengumuman:", isiLama);
+  if (!isiBaru) return;
+  const waktu = new Date().toLocaleString("id-ID");
+  try {
+    await db.collection("chatGlobal").doc(id).update({ isi: isiBaru, waktu });
+    alert("✅ Diperbarui");
+    tampilkanChat();
+  } catch (e) {
+    alert("❌ Gagal edit");
+  }
+}
+
+async function hapusChat(id) {
+  if (!confirm("Yakin hapus?")) return;
+  try {
+    await db.collection("chatGlobal").doc(id).delete();
+    alert("✅ Dihapus");
+    tampilkanChat();
+  } catch (e) {
+    alert("❌ Gagal hapus");
+  }
+}
 </script>
 </body>
 </html>
