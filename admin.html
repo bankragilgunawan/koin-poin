@@ -103,26 +103,20 @@
     </div>
   </div>
   
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-  import {
-    getFirestore, collection, addDoc, getDocs, orderBy, query,
-    updateDoc, doc, deleteDoc
-  } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
+  <!-- Tambahkan Firebase v9 compat (non-module) agar bisa jalan di GitHub Pages --><script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script><script>
   // ✅ Konfigurasi Firebase
   const firebaseConfig = {
-  apiKey: "AIzaSyALxoYAG7CiMY_i9oP5BZg9yIe7Scnfegk",
-  authDomain: "koin-pay.firebaseapp.com",
-  projectId: "koin-pay",
-  storageBucket: "koin-pay.appspot.com", // ✅ diperbaiki
-  messagingSenderId: "38032808385",
-  appId: "1:38032808385:web:9cd5c1ccdf9508bbf67740"
-};
+    apiKey: "AIzaSyALxoYAG7CiMY_i9oP5BZg9yIe7Scnfegk",
+    authDomain: "koin-pay.firebaseapp.com",
+    projectId: "koin-pay",
+    storageBucket: "koin-pay.appspot.com",
+    messagingSenderId: "38032808385",
+    appId: "1:38032808385:web:9cd5c1ccdf9508bbf67740"
+  };
 
   // ✅ Inisialisasi Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
   // ✅ PIN Admin
   const PIN_ADMIN = "1234";
