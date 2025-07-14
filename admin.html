@@ -103,7 +103,11 @@
     </div>
   </div>
   
-  <!-- Tambahkan Firebase v9 compat (non-module) agar bisa jalan di GitHub Pages --><script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script><script>
+  <!-- ✅ Firebase Script CDN -->
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+
+<script>
   // ✅ Konfigurasi Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyALxoYAG7CiMY_i9oP5BZg9yIe7Scnfegk",
@@ -114,14 +118,15 @@
     appId: "1:38032808385:web:9cd5c1ccdf9508bbf67740"
   };
 
-  // ✅ Inisialisasi Firebase
+  // ✅ Inisialisasi
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
+</script>
 
-  // ✅ PIN Admin
+<!-- ✅ Masukkan semua fungsi kamu DI SINI (verifikasi, tampilkanTransaksi, dll) -->
+<script>
   const PIN_ADMIN = "1234";
 
-  // ✅ Fungsi Login
   window.verifikasi = function () {
     const pin = document.getElementById("adminPin").value;
     if (pin === PIN_ADMIN) {
@@ -495,4 +500,4 @@ async function tampilkanTestimoni() {
 
 </script>
 </body>
-  </html>
+</html>
