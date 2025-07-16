@@ -1,136 +1,129 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Kirim Screenshot Testimoni</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kirim Bukti Tugas</title>
   <style>
-    body { font-family: 'Poppins', sans-serif; background: #f0f0f0; padding: 20px; }
-    h2 { text-align: center; color: #1e1e2f; }
-    .form-box {
-      background: white;
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #e67e22;
+    }
+    form {
+      background: #fff;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      max-width: 500px;
-      margin: 0 auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
-    input, textarea {
+    input, select {
       width: 100%;
       padding: 10px;
+      margin-top: 10px;
       margin-bottom: 15px;
-      border-radius: 8px;
       border: 1px solid #ccc;
-      font-size: 15px;
+      border-radius: 8px;
+      font-size: 14px;
     }
     button {
-      background: #1e1e2f;
-      color: white;
       padding: 12px;
+      width: 100%;
       border: none;
       border-radius: 8px;
+      background: #e67e22;
+      color: white;
       font-weight: bold;
       cursor: pointer;
     }
-    #preview {
-      width: 100%;
-      margin-top: 10px;
-      border-radius: 8px;
-      display: none;
-    }
-    .status {
-      text-align: center;
-      font-size: 14px;
+    #hasilUpload {
+      margin-top: 15px;
       color: green;
+      text-align: center;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <h2>📤 Kirim Screenshot Testimoni</h2>
 
-  <div class="form-box" id="formBox">
-    <input type="text" id="nama" placeholder="Nama kamu" required>
-    <textarea id="pesan" rows="3" placeholder="Pesan untuk admin..." required></textarea>
-    <input type="file" id="gambar" accept="image/*">
-    <img id="preview" src="" alt="Preview Gambar">
-    <button onclick="kirimKeAdmin()">Kirim ke Admin</button>
-    <div class="status" id="statusMsg"></div>
-  </div>
+  <h2>📤 Kirim Bukti Tugas</h2>
+
+  <form id="formBukti">
+    <input type="text" id="nama" placeholder="Nama kamu" required />
+    <input type="text" id="userId" placeholder="ID Pengguna" required />
+    
+    <select id="tugas" required>
+      <option value="">Pilih Tugas</option>
+      <option value="Login Harian">Login Harian</option>
+      <option value="Status WhatsApp">Status WhatsApp</option>
+      <option value="Reels Instagram">Reels Instagram</option>
+      <option value="Tulis Testimoni">Tulis Testimoni</option>
+      <option value="Lainnya">Lainnya</option>
+    </select>
+
+    <input type="file" id="fileBukti" accept="image/*,video/*" required />
+    <button type="submit">Kirim Bukti</button>
+  </form>
+
+  <div id="hasilUpload"></div>
 
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // ✅ Konfigurasi Firebase
+    // Konfigurasi Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyAY-j8HHUIHYsw9E6aWbnc2IkcF99pKqDk",
-      authDomain: "koinpoin-app.firebaseapp.com",
-      projectId: "koinpoin-app",
-      storageBucket: "koinpoin-app.appspot.com",
-      messagingSenderId: "872103394310",
-      appId: "1:872103394310:web:2f446a870e0149509a1787"
+      apiKey: "AIzaSyALxoYAG7CiMY_i9oP5BZg9yIe7Scnfegk",
+      authDomain: "koin-pay.firebaseapp.com",
+      projectId: "koin-pay",
+      storageBucket: "koin-pay.appspot.com",
+      messagingSenderId: "38032808385",
+      appId: "1:38032808385:web:9cd5c1ccdf9508bbf67740"
     };
-
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
     const storage = firebase.storage();
+    const db = firebase.firestore();
 
-    // ✅ Login Anonymous (wajib agar Firestore bisa digunakan)
-    firebase.auth().signInAnonymously().catch((error) => {
-      console.error("Login gagal:", error);
-    });
-
-    // ✅ Preview gambar otomatis
-    document.getElementById("gambar").addEventListener("change", function (e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (evt) {
-          document.getElementById("preview").src = evt.target.result;
-          document.getElementById("preview").style.display = "block";
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    // ✅ Fungsi kirim ke admin
-    async function kirimKeAdmin() {
+    // Kirim Bukti
+    document.getElementById("formBukti").addEventListener("submit", async (e) => {
+      e.preventDefault();
       const nama = document.getElementById("nama").value.trim();
-      const pesan = document.getElementById("pesan").value.trim();
-      const file = document.getElementById("gambar").files[0];
-      const statusMsg = document.getElementById("statusMsg");
+      const userId = document.getElementById("userId").value.trim();
+      const tugas = document.getElementById("tugas").value;
+      const file = document.getElementById("fileBukti").files[0];
+      const hasil = document.getElementById("hasilUpload");
+      hasil.innerText = "";
 
-      if (!nama || !pesan || !file) {
-        alert("Isi semua form dan pilih gambar!");
-        return;
+      if (!nama || !userId || !tugas || !file) {
+        return alert("⚠️ Semua kolom wajib diisi.");
       }
 
-      const waktu = new Date().toISOString();
-      const fileRef = storage.ref("screenshot/" + waktu + "_" + file.name);
-      statusMsg.innerText = "📤 Mengunggah...";
+      const tipe = file.type.startsWith("video") ? "video" : "foto";
+      const fileRef = storage.ref().child("buktiTugas/" + Date.now() + "_" + file.name);
+      const uploadTask = fileRef.put(file);
 
-      try {
-        // ✅ Upload gambar ke Firebase Storage
-        const snap = await fileRef.put(file);
-        const url = await snap.ref.getDownloadURL();
-        console.log("✅ URL Gambar:", url);
-
-        // ✅ Simpan data ke Firestore
-        await db.collection("pesanTestimoni").add({
-          nama, pesan, urlGambar: url, waktu
-        });
-
-        statusMsg.innerText = "✅ Berhasil dikirim ke Admin!";
-        document.getElementById("formBox").reset();
-        document.getElementById("preview").style.display = "none";
-      } catch (e) {
-        console.error("❌ ERROR:", e);
-        statusMsg.innerText = "❌ Gagal mengirim.";
-      }
-    }
+      uploadTask.on("state_changed", null,
+        (error) => {
+          alert("❌ Gagal upload: " + error.message);
+        },
+        async () => {
+          const url = await uploadTask.snapshot.ref.getDownloadURL();
+          await db.collection("buktiTugas").add({
+            nama, userId, tugas, tipe, url,
+            waktu: new Date().toLocaleString("id-ID")
+          });
+          hasil.innerText = "✅ Bukti berhasil dikirim!";
+          document.getElementById("formBukti").reset();
+        }
+      );
+    });
   </script>
 </body>
 </html>
